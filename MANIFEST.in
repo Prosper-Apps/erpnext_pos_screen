@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include pos_screen *.css
+recursive-include pos_screen *.csv
+recursive-include pos_screen *.html
+recursive-include pos_screen *.ico
+recursive-include pos_screen *.js
+recursive-include pos_screen *.json
+recursive-include pos_screen *.md
+recursive-include pos_screen *.png
+recursive-include pos_screen *.py
+recursive-include pos_screen *.svg
+recursive-include pos_screen *.txt
+recursive-exclude pos_screen *.pyc
