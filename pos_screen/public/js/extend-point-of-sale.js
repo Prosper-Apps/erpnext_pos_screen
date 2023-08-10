@@ -8,7 +8,6 @@ frappe.require('point-of-sale.bundle.js', function () {
 
         make_search_bar() {
             super.make_search_bar();
-            return;
 
             const me = this;
             const doc = me.events.get_frm().doc;
