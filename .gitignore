@@ -6,3 +6,4 @@ tags
 pos_screen/docs/current
 node_modules/
 __init__.py
+pos_screen/public/dist/*

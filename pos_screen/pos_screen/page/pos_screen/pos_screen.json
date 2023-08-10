@@ -12,7 +12,20 @@
  "owner": "Administrator",
  "page_name": "pos_screen",
  "restrict_to_domain": "Retail",
- "roles": [],
+ "roles": [
+    {
+     "role": "Accounts User"
+    },
+    {
+     "role": "Accounts Manager"
+    },
+    {
+     "role": "Sales User"
+    },
+    {
+     "role": "Sales Manager"
+    }
+   ],
  "script": null,
  "standard": "Yes",
  "style": null,
