@@ -7,21 +7,13 @@ frappe.require('point-of-sale.bundle.js', function () {
         }
 
         make_search_bar() {
+            super.make_search_bar();
+            return;
 
             const me = this;
             const doc = me.events.get_frm().doc;
-            this.$component.find('.search-field').html('');
             this.$component.find('.item-group-field').html('');
     
-            this.search_field = frappe.ui.form.make_control({
-                df: {
-                    label: __('Search'),
-                    fieldtype: 'Data',
-                    placeholder: __('Search by item code, serial number or barcode')
-                },
-                parent: this.$component.find('.search-field'),
-                render_input: true,
-            });		
             this.item_group_field = frappe.ui.form.make_control({
                 df: {
                     label: __('Item Group'),
@@ -43,7 +35,6 @@ frappe.require('point-of-sale.bundle.js', function () {
                 render_input: true,
             });
             
-            this.search_field.toggle_label(false);
             this.item_group_field.toggle_label(false);
     
             this.attach_clear_btn();
