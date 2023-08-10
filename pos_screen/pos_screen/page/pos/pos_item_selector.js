@@ -153,30 +153,28 @@ erpnext.PointOfSale.ItemSelector = class {
 			},
 			parent: this.$component.find('.search-field'),
 			render_input: true,
-		});
+		});		
 		this.item_group_field = frappe.ui.form.make_control({
 			df: {
 				label: __('Item Group'),
-				fieldtype: 'Link',
-				options: 'Item Group',
-				placeholder: __('Select item group'),
+				fieldtype: 'Select',
+				default: "All Item Groups",
+				options: [
+					{name: "All Item Groups", value: "All Item Groups"}, 
+					{name: "Products", value: "Products", class: "class_name"}, 
+					{name: "Raw Material", value: "Raw Material"}
+				],
 				onchange: function() {
 					me.item_group = this.value;
 					!me.item_group && (me.item_group = me.parent_item_group);
 					me.filter_items();
 				},
-				get_query: function () {
-					return {
-						query: 'erpnext.selling.page.point_of_sale.point_of_sale.item_group_query',
-						filters: {
-							pos_profile: doc ? doc.pos_profile : ''
-						}
-					};
-				},
+				placeholder: __('Select item group'),							
 			},
 			parent: this.$component.find('.item-group-field'),
 			render_input: true,
 		});
+		
 		this.search_field.toggle_label(false);
 		this.item_group_field.toggle_label(false);
 
