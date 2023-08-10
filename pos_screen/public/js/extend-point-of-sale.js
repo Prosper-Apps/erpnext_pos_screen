@@ -20,8 +20,17 @@ frappe.require('point-of-sale.bundle.js', function () {
                     default: "All Item Groups",
                     options: [
                         {name: "All Item Groups", value: "All Item Groups"}, 
-                        {name: "Products", value: "Products", class: "class_name"}, 
-                        {name: "Raw Material", value: "Raw Material"}
+                        {name: "Αλμυρά Σνακ", value: "Αλμυρά Σνακ"}, 
+                        {name: "KERASTIKA", value: "KERASTIKA"},
+                        {name: "Αλμυρά Σνακ", value: "Αλμυρά Σνακ"},
+                        {name: "PSOMIA", value: "PSOMIA"},
+                        {name: "ZUGIZOMENA", value: "ZUGIZOMENA"},
+                        {name: "FYLLARIKA", value: "FYLLARIKA"},
+                        {name: "SLICE FRANTZIOLAKIA", value: "SLICE FRANTZIOLAKIA"},
+                        {name: "SANDWICH", value: "SANDWICH"},
+                        {name: "Παξιμάδια", value: "Παξιμάδια"},
+                        {name: "Κέικς", value: "Κέικς"},
+                        {name: "Πίττες", value: "Πίττες"}
                     ],
                     onchange: function() {
                         me.item_group = this.value;
