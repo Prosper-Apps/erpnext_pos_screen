@@ -62,7 +62,32 @@ frappe.require('point-of-sale.bundle.js', function () {
 
     };
 
+    erpnext.PointOfSale.ItemCart = class KainotomoItemCart extends erpnext.PointOfSale.ItemCart {
+        constructor(wrapper) {
+            super(wrapper);
+        }
 
-    wrapper.pos = new erpnext.PointOfSale.Controller(wrapper);
-    window.cur_pos = wrapper.pos;
+        render_taxes(taxes) {
+            super.render_taxes(taxes);
+            this.$totals_section.find('.tax-label').html(__('Tax'))
+        }
+    }
+
+    erpnext.PointOfSale.PastOrderSummary = class KainotomoPastOrderSummary extends erpnext.PointOfSale.PastOrderSummary {
+        constructor(wrapper) {
+            super(wrapper);
+        }
+
+        get_taxes_html(doc) {
+            let taxes_html = super.get_taxes_html(doc);
+            var $html = $(taxes_html);
+            $html.find('.tax-label').text(__('Tax'));
+            var updatedHtmlString = $html.html();
+            return '<div class="taxes-wrapper">' + updatedHtmlString + '</div>';
+        }
+    }
+
+    //wrapper.pos = new erpnext.PointOfSale.Controller(wrapper);
+    //window.cur_pos = wrapper.pos;
+    
 });

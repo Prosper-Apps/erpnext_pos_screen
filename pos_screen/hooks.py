@@ -27,7 +27,6 @@ app_include_css = "/assets/pos_screen/css/pos_screen.css"
 
 # include js in page
 page_js = {
-    "pos" : "public/js/extend-point-of-sale.js",
 	"point-of-sale" : "public/js/extend-point-of-sale.js"
 }
 
