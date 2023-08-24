@@ -1,3 +1,9 @@
 .class_name {
     font-size: large;
 }
+
+.quantity-field {
+    grid-column: span 2 / span 2;
+    display: flex;
+    align-items: center;
+}
