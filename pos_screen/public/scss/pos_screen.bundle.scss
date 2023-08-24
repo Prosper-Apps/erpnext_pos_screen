@@ -1,0 +1,18 @@
+.class_name {
+    font-size: large;
+}
+
+.pos_screen-section {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    background-color: var(--fg-color);
+    padding: var(--padding-lg);
+	padding-bottom: var(--padding-sm);
+    align-items: center;
+}
+
+.quantity-field {
+    grid-column: span 2 / span 2;
+    display: flex;
+    align-items: center;
+}

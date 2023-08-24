@@ -86,7 +86,11 @@ frappe.require('point-of-sale.bundle.js', function () {
         prepare_dom() {
             super.prepare_dom();
 
-            this.$component.find('.filter-section').append('<div class="quantity-field"></div>');
+            this.$component.find('.items-selector').prevObject.prepend(`
+                <div class="pos_screen-section">
+                    <div class="quantity-field"></div>
+                </div>
+            `);
         }
 
         make_search_bar() {
