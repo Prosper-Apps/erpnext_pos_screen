@@ -12,11 +12,111 @@
 }
 
 .quantity-field {
-    grid-column: span 2 / span 2;
+    grid-column: span 4 / span 4;
     display: flex;
     align-items: center;
 }
 
+.pos_screen-button-field {
+    grid-column: span 8 / span 8;
+    display: flex;
+    align-items: center;
+    margin: 5px;
+}
+
 select option {
     font-size: xx-large;
+}
+
+.cart-container2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: var(--margin-md);
+    position: relative;
+    height: 90%;
+    background-color: var(--fg-color);
+    box-shadow: var(--shadow-base);
+    border-radius: var(--border-radius-md);
+
+    > .cart-label {
+        display: flex;
+        align-items: center;
+        font-weight: 700;
+        font-size: var(--text-lg);
+        padding-bottom: var(--padding-md);
+    }
+
+    > .cart-totals-section {
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+        width: 100%;
+        margin-top: var(--margin-md);
+        padding: var(--padding-lg);
+
+        > .add-discount-wrapper {
+            display: none;
+            align-items: center;
+            border-radius: var(--border-radius-md);
+            border: 1px dashed var(--gray-500);
+            padding: var(--padding-sm) var(--padding-md);
+            margin-bottom: var(--margin-sm);
+
+            > .add-discount-field {
+                width: 100%;
+            }
+
+            .discount-icon {
+                margin-right: var(--margin-sm);
+            }
+
+            .edit-discount-btn {
+                display: flex;
+                align-items: center;
+                font-weight: 500;
+                color: var(--dark-green-500);
+            }
+        }
+
+        > .net-total-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--padding-sm) 0px;
+            font-weight: 500;
+            font-size: var(--text-md);
+        }
+
+        > .item-qty-total-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--padding-sm) 0px;
+            font-weight: 500;
+            font-size: var(--text-md);
+        }
+
+        > .taxes-container {
+            flex-direction: column;
+            font-weight: 500;
+            font-size: var(--text-md);
+
+            > .tax-row {
+                display: flex;
+                justify-content: space-between;
+                line-height: var(--text-3xl);
+            }
+        }
+
+        > .grand-total-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--padding-sm) 0px;
+            font-weight: 700;
+            font-size: var(--text-lg);
+        }
+
+    }
 }
