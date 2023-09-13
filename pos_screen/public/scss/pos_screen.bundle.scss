@@ -119,4 +119,23 @@ select option {
         }
 
     }
+    
+}
+
+.point-of-sale-app {
+
+    > .items-selector {
+
+		> .items-container {
+			display: grid !important;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+			gap: var(--margin-sm);
+
+            .item-wrapper .item-display {
+                min-height: auto;
+                height: auto;
+            }
+            
+		}
+	}  
 }
