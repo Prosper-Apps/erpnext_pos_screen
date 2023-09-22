@@ -39,7 +39,7 @@ select option {
     box-shadow: var(--shadow-base);
     border-radius: var(--border-radius-md);
 
-    > .cart-label {
+    >.cart-label {
         display: flex;
         align-items: center;
         font-weight: 700;
@@ -47,7 +47,7 @@ select option {
         padding-bottom: var(--padding-md);
     }
 
-    > .cart-totals-section {
+    >.cart-totals-section {
         display: flex;
         flex-direction: column;
         flex-shrink: 0;
@@ -55,7 +55,7 @@ select option {
         margin-top: var(--margin-md);
         padding: var(--padding-lg);
 
-        > .add-discount-wrapper {
+        >.add-discount-wrapper {
             display: none;
             align-items: center;
             border-radius: var(--border-radius-md);
@@ -63,7 +63,7 @@ select option {
             padding: var(--padding-sm) var(--padding-md);
             margin-bottom: var(--margin-sm);
 
-            > .add-discount-field {
+            >.add-discount-field {
                 width: 100%;
             }
 
@@ -79,7 +79,7 @@ select option {
             }
         }
 
-        > .net-total-container {
+        >.net-total-container {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -88,7 +88,7 @@ select option {
             font-size: var(--text-md);
         }
 
-        > .item-qty-total-container {
+        >.item-qty-total-container {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -97,19 +97,19 @@ select option {
             font-size: var(--text-md);
         }
 
-        > .taxes-container {
+        >.taxes-container {
             flex-direction: column;
             font-weight: 500;
             font-size: var(--text-md);
 
-            > .tax-row {
+            >.tax-row {
                 display: flex;
                 justify-content: space-between;
                 line-height: var(--text-3xl);
             }
         }
 
-        > .grand-total-container {
+        >.grand-total-container {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -119,23 +119,27 @@ select option {
         }
 
     }
-    
+
 }
 
 .point-of-sale-app {
 
-    > .items-selector {
+    >.items-selector {
 
-		> .items-container {
-			display: grid !important;
+        >.items-container {
+            display: grid !important;
             grid-template-columns: repeat(4, minmax(0, 1fr));
-			gap: var(--margin-sm);
+            gap: var(--margin-sm);
 
-            .item-wrapper .item-display {
-                min-height: auto;
-                height: auto;
+            >.item-wrapper {
+                .item-display {
+                    display: none;
+                }
+
+                .item-qty-pill {
+                    display: none;
+                }
             }
-            
-		}
-	}  
+        }
+    }
 }
