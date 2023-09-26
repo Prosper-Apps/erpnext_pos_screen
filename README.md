@@ -1,6 +1,6 @@
 ## Pos Screen
 
-Show to customer the current POS sales invoice
+Show to customer the current POS sales invoice.
 
 #### License
 
