@@ -307,36 +307,135 @@ frappe.require('point-of-sale.bundle.js', function () {
             var updatedHtmlString = $html.html();
             return '<div class="taxes-wrapper">' + updatedHtmlString + '</div>';
         }
-    }
 
-    erpnext.PointOfSale.Payment = class KainotomoPayment extends erpnext.PointOfSale.Payment {
-        constructor(wrapper) {
-            super(wrapper);
+        print_receipt() {
+            let doc = this.doc;
+            this
+                .qz_connect(doc)
+                .then(function (doc) {                    
+                    var data = [];
+                    data.push('\x1B' + '\x40'); // init
+                    data.push('\x1B' + '\x61' + '\x31'); // center align
+                    data.push(doc.company + '\x0A');
+                    data.push('Archiepiskopou Makariou III 44, Aradippou 7102, Cyprus' + '\x0A');
+                    data.push('Tel. +357 24333773' + '\x0A');
+                    data.push('\x0A'); // line break
+
+                    data.push('\x1B' + '\x61' + '\x30'); // left align
+
+                    data.push('\x1B' + '\x45' + '\x0D'); // bold on
+                    data.push('Receipt No: ');
+                    data.push('\x1B' + '\x45' + '\x20'); // bold off
+                    data.push(doc.name + '\x0A');
+
+                    data.push('\x1B' + '\x45' + '\x0D'); // bold on
+                    data.push('Cashier: ');
+                    data.push('\x1B' + '\x45' + '\x20'); // bold off
+                    data.push(doc.owner + '\x0A');
+
+                    data.push('\x1B' + '\x45' + '\x0D'); // bold on
+                    data.push('Customer: ');
+                    data.push('\x1B' + '\x45' + '\x20'); // bold off
+                    data.push(doc.customer_name + '\x0A');
+
+                    data.push('\x1B' + '\x45' + '\x0D'); // bold on
+                    data.push('Date: ');
+                    data.push('\x1B' + '\x45' + '\x20'); // bold off
+                    data.push(doc.posting_date + '\x0A');
+
+                    data.push('\x1B' + '\x45' + '\x0D'); // bold on
+                    data.push('Time: ');
+                    data.push('\x1B' + '\x45' + '\x20'); // bold off
+                    data.push(doc.posting_time + '\x0A');
+
+                    data.push('\x0A'); // line break
+                    data.push('\x0A'); // line break
+                    data.push('Item Qty Amount' + '\x0A');
+                    data.push('\x1B' + '\x45' + '\x20'); // bold off
+
+                    // Loop through doc.items
+                    for (let i = 0; i < doc.items.length; i++) {
+                        let item = doc.items[i];
+                        data.push(item.item_name + ' ' + item.qty + ' x ' + item.rate + ' = €' + item.amount + '\x0A');
+                        data.push('\x0A'); // line break
+                    }
+
+                    // Net Total
+                    data.push('\x1B' + '\x45' + '\x0D'); // bold on
+                    data.push('Total: ');
+                    data.push('\x1B' + '\x45' + '\x20'); // bold off
+                    data.push('€' + doc.net_total + '\x0A');
+
+                    // Loop thrugh doc.taxes
+                    for (let i = 0; i < doc.taxes.length; i++) {
+                        let tax = doc.taxes[i];
+                        data.push('\x1B' + '\x45' + '\x0D'); // bold on
+                        data.push(tax.description + ': ');
+                        data.push('\x1B' + '\x45' + '\x20'); // bold off
+                        data.push('€' + tax.tax_amount + '\x0A');
+                    }
+
+                    // If doc.discount_amount then show it
+                    if (doc.discount_amount) {
+                        data.push('\x1B' + '\x45' + '\x0D'); // bold on
+                        data.push('Discount: ');
+                        data.push('\x1B' + '\x45' + '\x20'); // bold off
+                        data.push('€' + doc.discount_amount + '\x0A');
+                    }
+
+                    // Grand Total
+                    data.push('\x1B' + '\x45' + '\x0D'); // bold on
+                    data.push('Grand Total: ');
+                    data.push('\x1B' + '\x45' + '\x20'); // bold off
+                    data.push('€' + doc.grand_total + '\x0A');
+
+                    // Loop through doc.payments
+                    for (let i = 0; i < doc.payments.length; i++) {
+                        let payment = doc.payments[i];
+                        data.push('\x1B' + '\x45' + '\x0D'); // bold on
+                        data.push(payment.mode_of_payment + ': ');
+                        data.push('\x1B' + '\x45' + '\x20'); // bold off
+                        data.push('€' + payment.amount + '\x0A');
+                    }
+
+                    // Show doc.paid_amount
+                    data.push('\x1B' + '\x45' + '\x0D'); // bold on
+                    data.push('Paid Amount: ');
+                    data.push('\x1B' + '\x45' + '\x20'); // bold off
+                    data.push('€' + doc.paid_amount + '\x0A');
+
+                    // Show doc.change_amount
+                    data.push('\x1B' + '\x45' + '\x0D'); // bold on
+                    data.push('Change Amount: ');
+                    data.push('\x1B' + '\x45' + '\x20'); // bold off
+                    data.push('€' + doc.change_amount + '\x0A');
+
+                    // center align
+                    data.push('\x1B' + '\x61' + '\x31');
+                    data.push('\x0A'); // line break
+                    data.push('Thank you, please visit again.' + '\x0A');
+
+                    data.push('\x0A' + '\x0A' + '\x0A' + '\x0A' + '\x0A' + '\x0A' + '\x0A');
+                    data.push('\x1B' + '\x69') // Cut paper
+                    
+                    let config = qz.configs.create("POS Printer");
+                    return qz.print(config, data);
+                })
+                .then(frappe.ui.form.qz_success)
+                .catch((err) => {
+                    frappe.ui.form.qz_fail(err);
+                });
         }
 
-        checkout() {
-            this.open_drawer();
-            this.events.toggle_other_sections(true);
-            this.toggle_component(true);
-            
-            this.render_payment_section();
-            this.after_render();
-        }
-
-        qz_connect = function () {
+        qz_connect = function (doc) {
             return new Promise(function (resolve, reject) {
                 frappe.ui.form.qz_init().then(() => {
 
                     if (qz.websocket.isActive()) {
                         // if already active, resolve immediately
-                        // frappe.show_alert({message: __('QZ Tray Connection Active!'), indicator: 'green'});
-                        resolve();
+                        resolve(doc);
                     } else {
                         // try to connect once before firing the mimetype launcher
-                        frappe.show_alert({
-                            message: __("Attempting Connection to QZ Tray..."),
-                            indicator: "blue",
-                        });
                         
                         // Signing certificate
                         qz.security.setCertificatePromise(function(resolve, reject) {
@@ -358,22 +457,11 @@ frappe.require('point-of-sale.bundle.js', function () {
         
                         qz.websocket.connect().then(
                             () => {
-                                frappe.show_alert({
-                                    message: __("Connected to QZ Tray!"),
-                                    indicator: "green",
-                                });
-                                resolve();
+                                resolve(doc);
                             },
                             function retry(err) {
                                 if (err.message === "Unable to establish connection with QZ") {
                                     // if a connect was not successful, launch the mimetype, try 3 more times
-                                    frappe.show_alert(
-                                        {
-                                            message: __("Attempting to launch QZ Tray..."),
-                                            indicator: "blue",
-                                        },
-                                        14
-                                    );
                                     window.location.assign("qz:launch");
                                     qz.websocket
                                         .connect({
@@ -382,10 +470,6 @@ frappe.require('point-of-sale.bundle.js', function () {
                                         })
                                         .then(
                                             () => {
-                                                frappe.show_alert({
-                                                    message: __("Connected to QZ Tray!"),
-                                                    indicator: "green",
-                                                });
                                                 resolve();
                                             },
                                             () => {
@@ -413,6 +497,82 @@ frappe.require('point-of-sale.bundle.js', function () {
                 });
             });
         };
+    }
+
+    erpnext.PointOfSale.Payment = class KainotomoPayment extends erpnext.PointOfSale.Payment {
+        constructor(wrapper) {
+            super(wrapper);
+        }
+
+        checkout() {
+            this.open_drawer();
+            this.events.toggle_other_sections(true);
+            this.toggle_component(true);
+            
+            this.render_payment_section();
+            this.after_render();
+        }
+
+        qz_connect = function () {
+            return new Promise(function (resolve, reject) {
+                frappe.ui.form.qz_init().then(() => {
+
+                    if (qz.websocket.isActive()) {
+                        // if already active, resolve immediately
+                        resolve();
+                    } else {
+                        // Signing certificate
+                        qz.security.setCertificatePromise(function(resolve, reject) {
+                           fetch("/assets/pos_screen/qz_signing/digital-certificate.txt", {cache: 'no-store', headers: {'Content-Type': 'text/plain'}})
+                              .then(function(data) { data.ok ? resolve(data.text()) : reject(data.text()); });
+                        });
+
+                        qz.security.setSignaturePromise(function(toSign) {
+                        return function(resolve, reject) {
+                            frappe.call({
+                                method: "pos_screen.pos_screen.page.pos_screen.pos_screen.get_signature",
+                                args: { message: toSign },
+                                callback: function(r) {
+                                    resolve(r.message);
+                                }
+                            });                            
+                        };
+                        });
+        
+                        qz.websocket.connect().then(
+                            () => {
+                                resolve();
+                            },
+                            function retry(err) {
+                                if (err.message === "Unable to establish connection with QZ") {
+                                    window.location.assign("qz:launch");
+                                    qz.websocket
+                                        .connect({
+                                            retries: 3,
+                                            delay: 1,
+                                        })
+                                        .then(
+                                            () => {
+                                                resolve();
+                                            },
+                                            () => {
+                                                frappe.throw(
+                                                    __(
+                                                        'Error connecting to QZ Tray Application...<br><br> You need to have QZ Tray application installed and running, to use the Raw Print feature.<br><br><a target="_blank" href="https://qz.io/download/">Click here to Download and install QZ Tray</a>.<br> <a target="_blank" href="https://erpnext.com/docs/user/manual/en/setting-up/print/raw-printing">Click here to learn more about Raw Printing</a>.'
+                                                    )
+                                                );
+                                                reject();
+                                            }
+                                        );
+                                } else {
+                                    reject();
+                                }
+                            }
+                        );
+                    }
+                });
+            });
+        };
 
         open_drawer() {
             this
@@ -422,7 +582,7 @@ frappe.require('point-of-sale.bundle.js', function () {
                        '\x1B' + '\x40',          // init                       
                        '\x10' + '\x14' + '\x01' + '\x00' + '\x05',  // Generate Pulse to kick-out cash drawer**
                        ];
-                    let config = qz.configs.create("Generic / Text Only");
+                    let config = qz.configs.create("POS Printer");
                     return qz.print(config, data);
                 })
                 .then(frappe.ui.form.qz_success)
