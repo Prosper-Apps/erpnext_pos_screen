@@ -8,6 +8,14 @@ from frappe.utils import convert_utc_to_user_timezone
 from frappe.utils.background_jobs import get_queues, get_workers
 from frappe.utils.scheduler import is_scheduler_inactive
 
+import base64
+import os
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import padding
+import sys
+#from django.http import HttpResponse, HttpResponseBadRequest
+
 if TYPE_CHECKING:
 	from rq.job import Job
 
@@ -37,3 +45,14 @@ def remove_failed_jobs():
 @frappe.whitelist()
 def get_pos_profiles():
 	return frappe.get_list("POS Profile", filters={"Disabled": "No"}, fields=["name as label", "name as value"])
+
+@frappe.whitelist()
+def get_signature(message):
+	# Load signature
+	file_path = os.path.dirname(os.path.realpath(__file__)) + "/private-key.pem"
+	key = serialization.load_pem_private_key(open(file_path,"rb").read(), None, backend=default_backend())
+	# Create the signature
+	signature = key.sign(message.encode('utf-8'), padding.PKCS1v15(), hashes.SHA1())  # Use hashes.SHA1() for QZ Tray 2.0 and older
+
+	# Return the signature in a base64-encoded format as a string
+	return base64.b64encode(signature).decode('utf-8')

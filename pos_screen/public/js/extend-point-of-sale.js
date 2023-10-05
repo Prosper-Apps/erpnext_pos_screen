@@ -309,6 +309,129 @@ frappe.require('point-of-sale.bundle.js', function () {
         }
     }
 
+    erpnext.PointOfSale.Payment = class KainotomoPayment extends erpnext.PointOfSale.Payment {
+        constructor(wrapper) {
+            super(wrapper);
+        }
+
+        checkout() {
+            this.open_drawer();
+            this.events.toggle_other_sections(true);
+            this.toggle_component(true);
+            
+            this.render_payment_section();
+            this.after_render();
+        }
+
+        qz_connect = function () {
+            return new Promise(function (resolve, reject) {
+                frappe.ui.form.qz_init().then(() => {
+
+                    if (qz.websocket.isActive()) {
+                        // if already active, resolve immediately
+                        // frappe.show_alert({message: __('QZ Tray Connection Active!'), indicator: 'green'});
+                        resolve();
+                    } else {
+                        // try to connect once before firing the mimetype launcher
+                        frappe.show_alert({
+                            message: __("Attempting Connection to QZ Tray..."),
+                            indicator: "blue",
+                        });
+                        
+                        // Signing certificate
+                        qz.security.setCertificatePromise(function(resolve, reject) {
+                           fetch("/assets/pos_screen/qz_signing/digital-certificate.txt", {cache: 'no-store', headers: {'Content-Type': 'text/plain'}})
+                              .then(function(data) { data.ok ? resolve(data.text()) : reject(data.text()); });
+                        });
+
+                        qz.security.setSignaturePromise(function(toSign) {
+                        return function(resolve, reject) {
+                            frappe.call({
+                                method: "pos_screen.pos_screen.page.pos_screen.pos_screen.get_signature",
+                                args: { message: toSign },
+                                callback: function(r) {
+                                    resolve(r.message);
+                                }
+                            });                            
+                        };
+                        });
+        
+                        qz.websocket.connect().then(
+                            () => {
+                                frappe.show_alert({
+                                    message: __("Connected to QZ Tray!"),
+                                    indicator: "green",
+                                });
+                                resolve();
+                            },
+                            function retry(err) {
+                                if (err.message === "Unable to establish connection with QZ") {
+                                    // if a connect was not successful, launch the mimetype, try 3 more times
+                                    frappe.show_alert(
+                                        {
+                                            message: __("Attempting to launch QZ Tray..."),
+                                            indicator: "blue",
+                                        },
+                                        14
+                                    );
+                                    window.location.assign("qz:launch");
+                                    qz.websocket
+                                        .connect({
+                                            retries: 3,
+                                            delay: 1,
+                                        })
+                                        .then(
+                                            () => {
+                                                frappe.show_alert({
+                                                    message: __("Connected to QZ Tray!"),
+                                                    indicator: "green",
+                                                });
+                                                resolve();
+                                            },
+                                            () => {
+                                                frappe.throw(
+                                                    __(
+                                                        'Error connecting to QZ Tray Application...<br><br> You need to have QZ Tray application installed and running, to use the Raw Print feature.<br><br><a target="_blank" href="https://qz.io/download/">Click here to Download and install QZ Tray</a>.<br> <a target="_blank" href="https://erpnext.com/docs/user/manual/en/setting-up/print/raw-printing">Click here to learn more about Raw Printing</a>.'
+                                                    )
+                                                );
+                                                reject();
+                                            }
+                                        );
+                                } else {
+                                    frappe.show_alert(
+                                        {
+                                            message: "QZ Tray " + err.toString(),
+                                            indicator: "red",
+                                        },
+                                        14
+                                    );
+                                    reject();
+                                }
+                            }
+                        );
+                    }
+                });
+            });
+        };
+
+        open_drawer() {
+            this
+                .qz_connect()
+                .then(function () {
+                    var data = [
+                       '\x1B' + '\x40',          // init                       
+                       '\x10' + '\x14' + '\x01' + '\x00' + '\x05',  // Generate Pulse to kick-out cash drawer**
+                       ];
+                    let config = qz.configs.create("Generic / Text Only");
+                    return qz.print(config, data);
+                })
+                .then(frappe.ui.form.qz_success)
+                .catch((err) => {
+                    frappe.ui.form.qz_fail(err);
+                });
+        }
+    }
+
     //wrapper.pos = new erpnext.PointOfSale.Controller(wrapper);
     //window.cur_pos = wrapper.pos;
 
