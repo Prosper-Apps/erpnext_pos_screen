@@ -162,6 +162,19 @@ frappe.require('point-of-sale.bundle.js', function () {
                 return item_row;
             }
         }
+
+        init_payments() {
+            super.init_payments();
+            this.payment.events.submit_invoice = () => {	
+                this.frm.savesubmit()
+                    .then((r) => {
+                        this.toggle_components(false);
+                        this.order_summary.toggle_component(true);
+                        this.order_summary.load_summary_of(this.frm.doc, true);
+                        this.order_summary.print_receipt();
+                    });
+            }
+        }
     };
 
     erpnext.PointOfSale.ItemSelector = class KainotomoItemSelector extends erpnext.PointOfSale.ItemSelector {
