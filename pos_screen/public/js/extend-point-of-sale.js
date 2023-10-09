@@ -398,12 +398,13 @@ frappe.require('point-of-sale.bundle.js', function () {
                     var data = [];
                     data.push('\x1B' + '\x40'); // init
                     data.push('\x1B' + '\x61' + '\x31'); // center align
+                    data.push('--------------------------------');
                     data.push('\x0A'); // line break
                     data.push('\x0A'); // line break
-                    data.push('--------------------------------' + '\x0A');
                     data.push(doc.company + '\x0A');
                     data.push('Archiepiskopou Makariou III 44, Aradippou 7102, Cyprus' + '\x0A');
                     data.push('Tel. +357 24333773' + '\x0A');
+                    data.push('VAT No: 10308786G' + '\x0A');
                     data.push('\x0A'); // line break
 
                     data.push('\x1B' + '\x61' + '\x30'); // left align
@@ -441,7 +442,7 @@ frappe.require('point-of-sale.bundle.js', function () {
                     // Loop through doc.items
                     for (let i = 0; i < doc.items.length; i++) {
                         let item = doc.items[i];
-                        data.push(item.item_name + ' ' + item.qty + ' x ' + item.rate + ' = €' + item.amount + '\x0A');
+                        data.push(item.item_name + ' ' + item.qty + ' x ' + item.rate + ' = ' + item.amount + '\x0A');
                         data.push('\x0A'); // line break
                     }
 
@@ -449,7 +450,7 @@ frappe.require('point-of-sale.bundle.js', function () {
                     data.push('\x1B' + '\x45' + '\x0D'); // bold on
                     data.push('Total: ');
                     data.push('\x1B' + '\x45' + '\x20'); // bold off
-                    data.push('€' + doc.net_total + '\x0A');
+                    data.push(doc.net_total + '\x0A');
 
                     // Loop thrugh doc.taxes
                     for (let i = 0; i < doc.taxes.length; i++) {
@@ -457,7 +458,7 @@ frappe.require('point-of-sale.bundle.js', function () {
                         data.push('\x1B' + '\x45' + '\x0D'); // bold on
                         data.push(tax.description + ': ');
                         data.push('\x1B' + '\x45' + '\x20'); // bold off
-                        data.push('€' + tax.tax_amount + '\x0A');
+                        data.push(tax.tax_amount + '\x0A');
                     }
 
                     // If doc.discount_amount then show it
@@ -465,42 +466,23 @@ frappe.require('point-of-sale.bundle.js', function () {
                         data.push('\x1B' + '\x45' + '\x0D'); // bold on
                         data.push('Discount: ');
                         data.push('\x1B' + '\x45' + '\x20'); // bold off
-                        data.push('€' + doc.discount_amount + '\x0A');
+                        data.push(doc.discount_amount + '\x0A');
                     }
 
                     // Grand Total
                     data.push('\x1B' + '\x45' + '\x0D'); // bold on
                     data.push('Grand Total: ');
                     data.push('\x1B' + '\x45' + '\x20'); // bold off
-                    data.push('€' + doc.grand_total + '\x0A');
-
-                    // Loop through doc.payments
-                    for (let i = 0; i < doc.payments.length; i++) {
-                        let payment = doc.payments[i];
-                        data.push('\x1B' + '\x45' + '\x0D'); // bold on
-                        data.push(payment.mode_of_payment + ': ');
-                        data.push('\x1B' + '\x45' + '\x20'); // bold off
-                        data.push('€' + payment.amount + '\x0A');
-                    }
-
-                    // Show doc.paid_amount
-                    data.push('\x1B' + '\x45' + '\x0D'); // bold on
-                    data.push('Paid Amount: ');
-                    data.push('\x1B' + '\x45' + '\x20'); // bold off
-                    data.push('€' + doc.paid_amount + '\x0A');
-
-                    // Show doc.change_amount
-                    data.push('\x1B' + '\x45' + '\x0D'); // bold on
-                    data.push('Change Amount: ');
-                    data.push('\x1B' + '\x45' + '\x20'); // bold off
-                    data.push('€' + doc.change_amount + '\x0A');
+                    data.push(doc.grand_total + '\x0A');
 
                     // center align
                     data.push('\x1B' + '\x61' + '\x31');
                     data.push('\x0A'); // line break
                     data.push('Thank you, please visit again.' + '\x0A');
 
-                    data.push('--------------------------------' + '\x0A' + '\x0A');
+                    data.push('\x0A'); // line break
+                    data.push('\x0A'); // line break
+                    data.push('--------------------------------');
                     data.push('\x0A' + '\x0A' + '\x0A' + '\x0A' + '\x0A' + '\x0A' + '\x0A');
                     data.push('\x1B' + '\x69') // Cut paper
                     
